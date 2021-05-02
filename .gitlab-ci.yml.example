@@ -1,0 +1,86 @@
+variables:
+  PORT: 5022
+  #                USER@SERVER
+  DEST_SERVER: "jenkins@10.11.103.27"
+  DEST_PATH: /var/www/html/$CI_PROJECT_NAME
+
+stages:
+  #      - build
+  #      - test
+  - deploy_composer
+  - deploy_files
+  - deploy_migrate
+  - npm_install
+  - build_front
+
+#deploy_job1:
+#  artifacts:
+#      paths:
+#      - build/
+# only:
+# - master
+
+composer_install:
+  only:
+    refs:
+      - master
+    changes:
+      - composer.json
+      - composer.lock
+  stage: deploy_composer
+  script:
+    - scp -P $PORT composer.{json,lock} $DEST_SERVER:$DEST_PATH
+    # Makes the server print the executed commands to stdout.
+    # Required for monitoring and debug.
+    - ssh -p$PORT $DEST_SERVER "set -x &&cd $DEST_PATH &&composer install"
+
+deploy_files:
+  only:
+    - master
+  stage: deploy_files
+  script:
+    - EXCLUDE={'.git*','rsync.log','vendor/','rbac/assignments.php','runtime/',
+    - EXCLUDE+='web/uploads/','web/assets/','.env','commands/private/',
+    - EXCLUDE+='frontend/node_modules/','web/vue','web/fonts','frontend/.env'}
+    - '[ -f rsync.log ]&& rm rsync.log'
+    - echo $EXCLUDE
+    - >
+      eval rsync -rl --del -e \'ssh -p $PORT\'  --exclude=$EXCLUDE ./
+      $DEST_SERVER:$DEST_PATH --log-file=rsync.log
+
+run_migrate:
+  only:
+    refs:
+      - master
+    changes:
+      - migrations/**/*
+  stage: deploy_migrate
+  script:
+    - >
+      ssh -p$PORT $DEST_SERVER "set -x && /usr/bin/php $DEST_PATH/yii
+      migrate --interactive=0"
+
+npm_install:
+  only:
+    refs:
+      - master
+    changes:
+      - frontend/package.json
+      - frontend/package-lock.json
+  stage: npm_install
+  script:
+    # Makes the server print the executed commands to stdout.
+    # Required for monitoring and debug.
+    - ssh -p$PORT $DEST_SERVER "set -x &&cd $DEST_PATH/frontend &&npm install"
+
+build_front:
+  only:
+    refs:
+      - master
+    changes:
+      - frontend/src/**/*
+  stage: build_front
+  script:
+    # Makes the server print the executed commands to stdout.
+    # Required for monitoring and debug.
+    - ssh -p$PORT $DEST_SERVER "set -x &&cd $DEST_PATH/frontend &&npm run prod"
