@@ -1,6 +1,7 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-add variant="primary">Добавить стихию</b-button>
+    <b-button v-if="['admin', 'root'].indexOf(user.can) !== -1" v-b-modal.modal-add variant="primary">Добавить стихию
+    </b-button>
 
     <b-modal id="modal-add" ref="modal" title="Добавление стихии" @hidden="resetModal" @show="resetModal">
       <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -39,11 +40,12 @@
 import {
   BAlert, BButton, BCard, BCardGroup, BCardText, BFormGroup, BFormInput, BIconCircleFill, BModal
 } from "bootstrap-vue";
-import {methods} from "../../mixins";
+import {methods, users} from "../../mixins";
 import Axios from "axios";
 
 export default {
   async mounted() {
+    await this.getUser();
     await this.getLabels();
     await this.getElements();
   },
@@ -116,6 +118,6 @@ export default {
       this.nameState = null;
     }
   },
-  mixins: [methods]
+  mixins: [methods, users]
 }
 </script>

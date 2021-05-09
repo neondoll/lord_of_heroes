@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
+use yii\rbac\PhpManager;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -15,33 +18,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -55,11 +32,69 @@ class SiteController extends Controller
     }
 
     /**
+     * Displays about page.
+     *
+     * @return string
+     */
+    public function actionAbout(): string
+    {
+        return $this->render('about');
+    }
+
+    /**
+     * Displays contact page.
+     *
+     * @return Response|string
+     */
+    public function actionContact()
+    {
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
+
+            return $this->refresh();
+        }
+        return $this->render('contact', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionCreateUser(): string
+    {
+        if ($post = Yii::$app->request->post()) {
+            $post = Json::decode($post['user'], false);
+
+            $user = new User();
+            $user->auth_key = Yii::$app->security->generateRandomString();
+
+            foreach ($post as $key => $item) {
+                if ($key != 'password_reset') {
+                    if ($key == 'password') {
+                        $user->setPassword($item);
+                    } else {
+                        $user->$key = $item;
+                    }
+                }
+            }
+
+            $ret = ['success' => $user->save(), 'errors' => $user->getErrors()];
+
+            if ($ret['success']) {
+                $rbac = new PhpManager();
+                $rbac->revokeAll($user->id);
+                $rbac->assign($rbac->getRole('user'), $user->id);
+            }
+        }
+
+        return Json::encode($ret ?? 'Не верный пост');
+    }
+
+    /**
      * Displays homepage.
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         return $this->render('index');
     }
@@ -90,38 +125,41 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
+    public function actionRegistration(): string
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        return $this->render('/index', ['breadcrumbs' => ['Регистрация']]);
     }
 
     /**
-     * Displays about page.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function actionAbout()
+    public function behaviors(): array
     {
-        return $this->render('about');
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
     }
 }

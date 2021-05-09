@@ -37,4 +37,7 @@ return [
     '/elements/index' => [
         'type' => 2,
     ],
+    '/classes/index' => [
+        'type' => 2,
+    ],
 ];

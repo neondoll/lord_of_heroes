@@ -24,7 +24,9 @@ class CharactersController extends Controller
 
         return [
             'character' => $character,
-            'large_photo_url' => Yii::$app->assetManager->publish(Yii::getAlias('@webroot') . '/uploads/' . $character->large_photo_url)[1],
+            'large_photo_url' => $character->large_photo_url
+                ? Yii::$app->assetManager->publish(Yii::getAlias('@webroot') . '/uploads/' . $character->large_photo_url)[1]
+                : null,
             'race' => $character->race
         ];
     }

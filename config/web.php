@@ -9,10 +9,10 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'language' => 'ru-RU',
-    'defaultRoute' => 'site/login',
+    'defaultRoute' => 'characters'/*'site/login'*/,
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
         '@mdm/admin' => '@app/widgets/yii2-admin',
     ],
     'modules' => [
@@ -29,12 +29,29 @@ $config = [
         ]
     ],
 
-     'as access' => [
+    'as access' => [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
-            '*',
-            'site/*',
-            'admin/*'
+            //'*',
+            //'admin/*',
+            'api/characters/index',
+            'api/characters/labels',
+            'api/characters/view',
+            'api/character-variations/labels',
+            'api/character-variations/index',
+            'api/classes/index',
+            'api/classes/labels',
+            'api/elements/index',
+            'api/elements/labels',
+            'api/races/index',
+            'api/races/labels',
+            'api/users/current',
+            'characters/index',
+            'characters/view',
+            'classes/index',
+            'elements/index',
+            'races/index',
+            'site/*'
             // The actions listed here will be allowed to everyone including guests.
             // So, 'admin/*' should not appear here in the production, of course.
             // But in the earlier stages of your development, you may probably want to
@@ -48,7 +65,7 @@ $config = [
         'assetManager' => [
             'appendTimestamp' => true,
             'bundles' => [
-               // 'yii\web\JqueryAsset' => false,
+                // 'yii\web\JqueryAsset' => false,
                 //'yii\bootstrap4\BootstrapPluginAsset' => false,
                 'yii\bootstrap4\BootstrapAsset' => false,
             ],

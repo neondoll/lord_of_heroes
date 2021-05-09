@@ -1,3 +1,5 @@
+import Axios from "axios";
+
 const methods = {
     methods: {
         checkFilling(str) {
@@ -33,6 +35,17 @@ const methods = {
             }
             return '';
         },
+        getDateTime(date_time) {
+            if (date_time) {
+                let arr_date_time = date_time.split(' ');
+                if (arr_date_time.length > 1) {
+                    let arr_date = arr_date_time[0].split('-');
+                    let arr_time = arr_date_time[1].split(':');
+                    return arr_date[2] + '.' + arr_date[1] + '.' + arr_date[0] + ' ' + arr_time[0] + ':' + arr_time[1];
+                }
+            }
+            return '';
+        },
         getStatusVariant(id) {
             switch (Number(id)) {
                 case 1:
@@ -60,4 +73,20 @@ const methods = {
     }
 };
 
-export {methods};
+const users = {
+    data() {
+        return {
+            user: {}
+        }
+    },
+    methods: {
+        async getUser() {
+            await Axios.get('/api/users/current').then((res) => {
+                this.user = res.data.user;
+                this.user.can = res.data.can;
+            });
+        },
+    }
+}
+
+export {methods, users};

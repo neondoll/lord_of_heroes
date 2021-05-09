@@ -45,23 +45,29 @@ AppAsset::register($this);
         'options' => ['class' => 'bg-dark navbar navbar-dark navbar-expand-lg']
     ]);
     echo Nav::widget([
-        'items' => MenuHelper::getAssignedMenu(Yii::$app->user->id),
+        'items' => [
+            ['label' => 'Герои', 'url' => ['/characters']],
+            ['label' => 'Классы', 'url' => ['/classes']],
+            ['label' => 'Расы', 'url' => ['/races']],
+            ['label' => 'Стихии', 'url' => ['/elements']]
+        ],
+        //'items' => MenuHelper::getAssignedMenu(Yii::$app->user->id),
         'options' => ['class' => 'ml-auto navbar-nav']
     ]);
     echo Nav::widget([
-        'items' => [
-            Yii::$app->user->isGuest ? (
+        'items' => Yii::$app->user->isGuest ? [
+            ['label' => 'Регистрация', 'url' => ['/site/registration']],
             ['label' => 'Вход', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'])
-                . Html::submitButton(
-                    'Выйти (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn nav-link']
-                )
-                . Html::endForm()
-                . '</li>'
+        ] : [
+            '<li>'
+            . Html::beginForm(['/site/logout'])
+            . Html::submitButton(
+                'Выйти (' . Yii::$app->user->identity->username . ')',
+                ['class' => 'btn nav-link']
             )
+            . Html::endForm()
+            . '</li>'
+
         ],
         'options' => ['class' => 'navbar-nav']
     ]);

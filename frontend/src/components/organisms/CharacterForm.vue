@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <b-form-group id="input-group-1" label-for="input-1" :label="`${labels.form_of_appeal}:`">
-          <b-form-input v-model="form.form_of_appeal" id="input-1" placeholder="Введите форму обращения" required/>
+          <b-form-input v-model="form.form_of_appeal" id="input-1" placeholder="Введите форму обращения"/>
         </b-form-group>
       </b-col>
       <b-col>
@@ -27,13 +27,13 @@
       <b-col>
         <b-form-group id="input-group-5" label-for="input-5" :label="`${labels.height}:`">
           <b-input-group append="см">
-            <b-form-input v-model="form.height" id="input-5" min="0" placeholder="Введите рост" required type="number"/>
+            <b-form-input v-model="form.height" id="input-5" min="0" placeholder="Введите рост" type="number"/>
           </b-input-group>
         </b-form-group>
       </b-col>
       <b-col>
         <b-form-group id="input-group-4" label-for="input-4" :label="`${labels.dob}:`">
-          <b-form-input v-model="form.dob" id="input-4" required type="date"/>
+          <b-form-input v-model="form.dob" id="input-4" type="date"/>
         </b-form-group>
       </b-col>
     </b-row>
@@ -41,19 +41,18 @@
     <b-row>
       <b-col>
         <b-form-group id="input-group-6" label-for="input-6" :label="`${labels.values}:`">
-          <b-form-input v-model="form.values" id="input-6" placeholder="Введите ценности" required/>
+          <b-form-input v-model="form.values" id="input-6" placeholder="Введите ценности"/>
         </b-form-group>
       </b-col>
       <b-col>
         <b-form-group id="input-group-7" label-for="input-7" :label="`${labels.favorite_food}:`">
-          <b-form-input v-model="form.favorite_food" id="input-7" placeholder="Введите любимую еду" required/>
+          <b-form-input v-model="form.favorite_food" id="input-7" placeholder="Введите любимую еду"/>
         </b-form-group>
       </b-col>
     </b-row>
 
     <b-form-group id="input-group-8" label-for="input-8" :label="`${labels.description}:`">
-      <b-form-textarea v-model="form.description" id="input-8" max-rows="6" placeholder="Введите описание" required
-                       rows="3"/>
+      <b-form-textarea v-model="form.description" id="input-8" max-rows="6" placeholder="Введите описание" rows="3"/>
     </b-form-group>
 
     <b-row>

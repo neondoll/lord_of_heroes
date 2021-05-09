@@ -2,7 +2,8 @@
 
 namespace app\models;
 
-use Yii;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "classes".
@@ -13,35 +14,16 @@ use Yii;
  *
  * @property CharacterVariations[] $characterVariations
  */
-class Classes extends \yii\db\ActiveRecord
+class Classes extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
-    {
-        return 'classes';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['system_status'], 'integer'],
-            [['name'], 'string', 'max' => 255],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Наименование',
             'system_status' => 'System Status',
         ];
     }
@@ -49,10 +31,29 @@ class Classes extends \yii\db\ActiveRecord
     /**
      * Gets query for [[CharacterVariations]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getCharacterVariations()
+    public function getCharacterVariations(): ActiveQuery
     {
         return $this->hasMany(CharacterVariations::className(), ['id_class' => 'id']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules(): array
+    {
+        return [
+            [['name'], 'string', 'max' => 255],
+            [['system_status'], 'integer']
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName(): string
+    {
+        return 'classes';
     }
 }
