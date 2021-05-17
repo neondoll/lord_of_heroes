@@ -2,6 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
+
 /* @var $model app\models\LoginForm */
 
 use yii\bootstrap4\Html;
@@ -15,26 +16,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin([
         'id' => 'login-form',
-        'layout' => 'horizontal',
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
-        ],
+        'layout' => 'horizontal'
     ]); ?>
 
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+    <div id="app"></div>
 
-        <?= $form->field($model, 'password')->passwordInput() ?>
+    <div class="row">
+        <div class="col-6">
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-        <?= $form->field($model, 'rememberMe')->checkbox([
-            'template' => "<div class=\"col-6\">{input} {label}</div>\n<div class=\"col-6\">{error}</div>",
-        ]) ?>
+            <?= $form->field($model, 'password')->passwordInput() ?>
 
-        <div class="form-group">
-            <div class="col-lg-offset-1 col-lg-11">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+            <?= $form->field($model, 'rememberMe')->checkbox() ?>
+
+            <div class="form-group">
+                <div class="col-lg-offset-1 col-lg-11">
+                    <?= Html::submitButton('Войти', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                </div>
             </div>
         </div>
+    </div>
 
     <?php ActiveForm::end(); ?>
 </div>
